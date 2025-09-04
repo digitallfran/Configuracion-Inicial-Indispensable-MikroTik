@@ -39,11 +39,11 @@
 <h3>Paso 3: Nombrar las Interfaces Físicas</h3>
 <p>Se asignan nombres descriptivos a las interfaces. Usar comillas es <strong>obligatorio</strong> porque los nombres contienen espacios.</p>
 <pre><code>/interface ethernet
-set [ find default-name=ether1 ] name="1 - WAN"
-set [ find default-name=ether2 ] name="2 - LAN"
-set [ find default-name=ether3 ] name="3 - LAN"
-set [ find default-name=ether4 ] name="4 - LAN"
-set [ find default-name=ether5 ] name="5 - LAN"
+set [ find default-name=ether1 ] name="1 - WAN" comment="ISP conexion a Internet"
+set [ find default-name=ether2 ] name="2 - LAN" comment="Red LAN"
+set [ find default-name=ether3 ] name="3 - LAN" comment="Red LAN"
+set [ find default-name=ether4 ] name="4 - LAN" comment="Red LAN"
+set [ find default-name=ether5 ] name="5 - LAN" comment="Red LAN"
 </code></pre>
 
 <h3>Paso 4: Crear Listas de Interfaces</h3>
