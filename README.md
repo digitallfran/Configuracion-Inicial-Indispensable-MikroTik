@@ -21,7 +21,7 @@
 ><div style="border-left: 5px solid #ffc107; padding: 10px 15px; background-color: #fff3cd; margin-bottom: 20px;">
 >  <p><strong>¡ADVERTENCIA!</strong><br>
 >  Este script utiliza un nombre de usuario (<code>Digitallfran</code>) y una contraseña (<code>TuCl@veSegura</code>) de ejemplo. Es <strong>crucial</strong> que los modifiques por tus propias credenciales seguras antes de aplicar el script.</p>
->  <p>Luego de aplicar el script asegurate de colocar luego la ip de tu RB y el puerto 10.0.0.1:9000 para entrar en Winbox</p>
+>  <p>Tras aplicar el script, conéctate a tu RouterBOARD usando la dirección 10.0.0.1:9000</p>
 ></div>
 
 <h3>Paso 1: Crear Usuario Administrador y Deshabilitar 'admin'</h3>
