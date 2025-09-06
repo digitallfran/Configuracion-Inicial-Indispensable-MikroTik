@@ -49,8 +49,8 @@ set [ find default-name=ether5 ] name="5 - LAN" comment="Red LAN"
 <h3>Paso 4: Crear Listas de Interfaces</h3>
 <p>Usar listas de interfaces es una buena práctica en RouterOS v7. Permite crear reglas de firewall más limpias y fáciles de mantener, ya que agrupamos las interfaces por su función (LAN o WAN).</p>
 <pre><code>/interface list
-add name=WAN comment="Interfaces conectadas a Internet"
-add name=LAN comment="Interfaces de la red local"
+add name=WANs comment="Interfaces conectadas a Internet"
+add name=LANs comment="Interfaces de la red local"
 </code></pre>
 
 <h3>Paso 5: Crear el Bridge LAN y Asignar Miembros a Listas</h3>
@@ -62,8 +62,8 @@ add bridge=Bridge-LAN interface="3 - LAN"
 add bridge=Bridge-LAN interface="4 - LAN"
 add bridge=Bridge-LAN interface="5 - LAN"
 /interface list member
-add interface="1 - WAN" list=WAN
-add interface=Bridge-LAN list=LAN
+add interface="1 - WAN" list=WANs
+add interface=Bridge-LAN list=LANs
 </code></pre>
 
 <h3>Paso 6: Configurar WAN, NTP y DNS</h3>
@@ -89,14 +89,14 @@ add interface=Bridge-LAN list=LAN
 <h3>Paso 9: Aplicar Firewall de Seguridad</h3>
 <p>Este es el conjunto de reglas de firewall esencial. Protege al router y a la red LAN de accesos no solicitados desde Internet, mientras permite que tus usuarios naveguen sin problemas.</p>
 <pre><code>/ip firewall filter
-add action=fasttrack-connection chain=forward connection-state=established,related in-interface-list=LAN out-interface-list=WAN comment="Acelerar trafico LAN -> WAN"
+add action=fasttrack-connection chain=forward connection-state=established,related in-interface-list=LANs out-interface-list=WANs comment="Acelerar trafico LAN -> WAN"
 add action=accept chain=forward connection-state=established,related comment="Permitir establecido y relacionado"
 add action=drop chain=forward connection-state=invalid comment="Bota conexiones invalidas"
-add action=accept chain=forward connection-state=new in-interface-list=LAN out-interface-list=WAN comment="Permitir nuevas conexiones desde LAN"
+add action=accept chain=forward connection-state=new in-interface-list=LANs out-interface-list=WANs comment="Permitir nuevas conexiones desde LAN"
 add action=drop chain=forward comment="Bota el resto del trafico forward"
 add action=accept chain=input connection-state=established,related comment="Permitir establecido y relacionado al router"
 add action=drop chain=input connection-state=invalid comment="Bota conexiones invalidas al router"
-add action=accept chain=input in-interface-list=LAN comment="Permitir administracion desde LAN"
+add action=accept chain=input in-interface-list=LANs comment="Permitir administracion desde LAN"
 add action=drop chain=input comment="Bota el resto del trafico al router"
 </code></pre>
 
@@ -116,8 +116,8 @@ set [find name=winbox] port=9000
 /system identity set name="Router Core - Administrador"
 /system clock set time-zone-name=America/Bogota
 /interface list
-add name=WAN comment="Interfaces conectadas a Internet"
-add name=LAN comment="Interfaces de la red local"
+add name=WANs comment="Interfaces conectadas a Internet"
+add name=LANs comment="Interfaces de la red local"
 /interface ethernet
 set [ find default-name=ether1 ] name="1 - WAN" comment="ISP conexion a Internet"
 set [ find default-name=ether2 ] name="2 - LAN" comment="Red LAN"
@@ -131,8 +131,8 @@ add bridge=Bridge-LAN interface="3 - LAN"
 add bridge=Bridge-LAN interface="4 - LAN"
 add bridge=Bridge-LAN interface="5 - LAN"
 /interface list member
-add interface="1 - WAN" list=WAN
-add interface=Bridge-LAN list=LAN
+add interface="1 - WAN" list=WANs
+add interface=Bridge-LAN list=LANs
 /ip dhcp-client add interface="1 - WAN" use-peer-dns=no use-peer-ntp=no add-default-route=yes comment="Configuracion automatica para la WAN del ISP"
 /system ntp client set enabled=yes servers=time.google.com
 /ip dns set allow-remote-requests=yes cache-size=4096KiB servers=1.1.1.1,8.8.8.8,9.9.9.9
@@ -140,16 +140,16 @@ add interface=Bridge-LAN list=LAN
 /ip pool add name=Pool-DHCP-LAN ranges=10.0.0.2-10.0.0.254 comment="Rango de IPs para clientes de la LAN"
 /ip dhcp-server add address-pool=Pool-DHCP-LAN interface=Bridge-LAN name=DHCP-Server-LAN comment="Servidor DHCP para la red LAN"
 /ip dhcp-server network add address=10.0.0.0/24 dns-server=10.0.0.1 gateway=10.0.0.1
-/ip firewall nat add action=masquerade chain=srcnat out-interface-list=WAN comment="NAT para que la LAN salga a Internet"
+/ip firewall nat add action=masquerade chain=srcnat out-interface-list=WANs comment="NAT para que la LAN salga a Internet"
 /ip firewall filter
-add action=fasttrack-connection chain=forward connection-state=established,related in-interface-list=LAN out-interface-list=WAN comment="Acelerar trafico LAN -> WAN"
+add action=fasttrack-connection chain=forward connection-state=established,related in-interface-list=LANs out-interface-list=WANs comment="Acelerar trafico LAN -> WAN"
 add action=accept chain=forward connection-state=established,related comment="Permitir establecido y relacionado"
 add action=drop chain=forward connection-state=invalid comment="Bota conexiones invalidas"
-add action=accept chain=forward connection-state=new in-interface-list=LAN out-interface-list=WAN comment="Permitir nuevas conexiones desde LAN"
+add action=accept chain=forward connection-state=new in-interface-list=LANs out-interface-list=WANs comment="Permitir nuevas conexiones desde LAN"
 add action=drop chain=forward comment="Bota el resto del trafico forward"
 add action=accept chain=input connection-state=established,related comment="Permitir establecido y relacionado al router"
 add action=drop chain=input connection-state=invalid comment="Bota conexiones invalidas al router"
-add action=accept chain=input in-interface-list=LAN comment="Permitir administracion desde LAN"
+add action=accept chain=input in-interface-list=LANs comment="Permitir administracion desde LAN"
 add action=drop chain=input comment="Bota el resto del trafico al router"
 /ip service
 disable [find where name="telnet" or name="ftp" or name="www" or name="ssh" or name="www-ssl"]
